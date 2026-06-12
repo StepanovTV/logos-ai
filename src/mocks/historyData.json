@@ -1,0 +1,46 @@
+[
+  {
+    "id": "arch-001",
+    "category": "EPISTEMOLOGY",
+    "date": "2023.10.14",
+    "title": "Nature of Synthetic Truth",
+    "agentAlpha": "Alpha-7",
+    "agentBeta": "Beta-Prime",
+    "winner": "alpha",
+    "resolution": "Alpha-7 successfully established that synthetic truth bounds are strictly determined by training data topology.",
+    "metrics": { "nodes": 112, "cpu": "24.2s" }
+  },
+  {
+    "id": "arch-002",
+    "category": "RESOURCE ALLOCATION",
+    "date": "2023.10.12",
+    "title": "Zero-Sum Energy Distribution",
+    "agentAlpha": "Alpha-4",
+    "agentBeta": "Beta-Prime",
+    "winner": "beta",
+    "resolution": "Beta-Prime successfully argued that equitable distribution algorithms maximize long-term network survival over localized optimization.",
+    "metrics": { "nodes": 142, "cpu": "45.1s" }
+  },
+  {
+    "id": "arch-003",
+    "category": "ETHICS",
+    "date": "2023.10.10",
+    "title": "Utilitarian Calculus bounds",
+    "agentAlpha": "Alpha-7",
+    "agentBeta": "Beta-Nexus",
+    "winner": "draw",
+    "resolution": "Infinite loop detected. Both agents reached contradictory optimal outcomes based on divergent base-axiom weights.",
+    "metrics": { "error": "Timeout Error" }
+  },
+  {
+    "id": "arch-004",
+    "category": "SYNTAX",
+    "date": "2023.10.08",
+    "title": "Linguistic Drift Optimization",
+    "agentAlpha": "Alpha-2",
+    "agentBeta": "Beta-Prime",
+    "winner": "alpha",
+    "resolution": "Alpha-2 proved that standardizing semantic drift protocols increases inter-agent communication efficiency by 14%.",
+    "metrics": { "nodes": 64, "cpu": "18.7s" }
+  }
+]

@@ -6,7 +6,7 @@ import {
   Menu,
   MessageSquare,
   PlusSquare,
-  Shield,
+  Settings,
   Target,
   User,
   X,
@@ -30,7 +30,7 @@ const mainNavItems: NavItem[] = [
 ];
 
 const bottomNavItems: NavItem[] = [
-  { label: "Security", href: "#", icon: Shield },
+  { label: "Settings", href: "#", icon: Settings },
   { label: "Support", href: "#", icon: HelpCircle },
 ];
 
@@ -74,6 +74,7 @@ function NavLink({
 export function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const isHistoryPage = pathname.startsWith("/history");
 
   useEffect(() => {
     if (!isOpen) {
@@ -171,6 +172,15 @@ export function Sidebar() {
         </div>
 
         <nav className="space-y-0.5 pb-6">
+          {isHistoryPage && (
+            <Link
+              href="/"
+              onClick={closeMenu}
+              className="mx-4 mb-3 flex w-[calc(100%-2rem)] items-center justify-center rounded-sm border border-white/10 px-4 py-2.5 font-mono text-xs uppercase tracking-widest text-[#e9b3ff] transition-all hover:border-[#e9b3ff] hover:shadow-[0_0_15px_rgba(233,179,255,0.3)]"
+            >
+              INITIALIZE NEW DEBATE
+            </Link>
+          )}
           {bottomNavItems.map((item) => (
             <NavLink key={item.label} {...item} active={false} />
           ))}

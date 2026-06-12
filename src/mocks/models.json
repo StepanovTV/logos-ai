@@ -1,0 +1,51 @@
+{
+  "maxActiveNodes": 16,
+  "models": [
+    {
+      "id": "gpt-4o",
+      "name": "GPT-4o",
+      "provider": "OPENAI",
+      "icon": "brain",
+      "active": true,
+      "accent": "alpha",
+      "paramCount": "Undisclosed",
+      "contextWindow": "128k Tokens",
+      "releaseDate": "2024-05-13",
+      "reasoningStyle": "High creative variance, adaptive tone matching. Prone to expansive exploration of divergent logical paths."
+    },
+    {
+      "id": "claude-3.5-sonnet",
+      "name": "Claude 3.5",
+      "provider": "ANTHROPIC",
+      "icon": "cpu",
+      "active": true,
+      "accent": "beta",
+      "paramCount": "Undisclosed",
+      "contextWindow": "200k Tokens",
+      "releaseDate": "2024-06-20",
+      "reasoningStyle": "Strict logical adherence, highly nuanced ontological framing. Excels in structured debate formats."
+    },
+    {
+      "id": "gemini-1.5-pro",
+      "name": "Gemini 1.5",
+      "provider": "GOOGLE",
+      "icon": "infinity",
+      "active": false,
+      "paramCount": "Undisclosed",
+      "contextWindow": "2M Tokens",
+      "releaseDate": "2024-05-14",
+      "reasoningStyle": "Massive context retrieval, strong at integrating vast external datasets into coherent arguments."
+    },
+    {
+      "id": "llama-3.1",
+      "name": "Llama 3.1",
+      "provider": "META",
+      "icon": "network",
+      "active": false,
+      "paramCount": "405B",
+      "contextWindow": "128k Tokens",
+      "releaseDate": "2024-07-23",
+      "reasoningStyle": "Direct, pragmatic logic. Open-weight architecture allows for deep systemic manipulation and specialized fine-tuning."
+    }
+  ]
+}

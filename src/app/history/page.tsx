@@ -1,10 +1,11 @@
+import { HistoryView } from "@/components/history/HistoryView";
 import { PageShell } from "@/components/layout/PageShell";
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
+import { archiveSessions } from "@/mocks/historyData";
 
 export default function HistoryPage() {
   return (
-    <PageShell>
-      <PlaceholderPage title="History" />
+    <PageShell variant="fluid">
+      <HistoryView sessions={archiveSessions} />
     </PageShell>
   );
 }

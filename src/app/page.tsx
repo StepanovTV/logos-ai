@@ -154,7 +154,7 @@ export default function Home() {
             >
               {isInitializing
                 ? "Инициализация..."
-                : "ИНИЦИАЛИЗИРОВАТЬ БРЕШЬ"}
+                : "INITIALIZE DEBATE"}
             </NeonButton>
           </div>
         </div>
