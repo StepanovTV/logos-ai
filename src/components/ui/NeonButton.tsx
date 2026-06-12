@@ -6,8 +6,9 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 type NeonButtonVariant = "alpha" | "beta";
 
 type NeonButtonProps = {
-  variant: NeonButtonVariant;
+  variant?: NeonButtonVariant;
   children: ReactNode;
+  icon?: ReactNode;
   className?: string;
 } & Pick<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -16,13 +17,14 @@ type NeonButtonProps = {
 
 const variantClasses: Record<NeonButtonVariant, string> = {
   alpha:
-    "border-primary text-primary hover:drop-shadow-[0_0_15px_#00f0ff] focus-visible:ring-primary/50",
-  beta: "border-secondary text-secondary hover:drop-shadow-[0_0_15px_#e9b3ff] focus-visible:ring-secondary/50",
+    "border-white/20 text-white hover:border-[#00f0ff] hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] focus-visible:ring-[#00f0ff]/50",
+  beta: "border-white/20 text-white hover:border-[#e9b3ff] hover:shadow-[0_0_15px_rgba(233,179,255,0.3)] focus-visible:ring-[#e9b3ff]/50",
 };
 
 export function NeonButton({
-  variant,
+  variant = "alpha",
   children,
+  icon,
   onClick,
   disabled = false,
   type = "button",
@@ -35,8 +37,9 @@ export function NeonButton({
       disabled={disabled}
       whileHover={disabled ? undefined : { scale: 1.02 }}
       whileTap={disabled ? undefined : { scale: 0.98 }}
-      className={`w-full rounded-sm border bg-transparent px-4 py-3 font-mono text-sm uppercase tracking-widest transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center gap-2 rounded-sm border bg-transparent px-6 py-3 font-mono text-xs uppercase tracking-widest transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${className}`}
     >
+      {icon}
       {children}
     </motion.button>
   );

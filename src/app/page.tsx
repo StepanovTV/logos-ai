@@ -1,119 +1,61 @@
 "use client";
 
 import { AgentConfigPanel } from "@/components/features/AgentConfigPanel";
+import { PageShell } from "@/components/layout/PageShell";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { NeonButton } from "@/components/ui/NeonButton";
-import { AGENT_MODELS } from "@/constants/models";
+import { debateState } from "@/mocks/debateState";
 import type { AgentId, DebateConfig } from "@/types/debate";
-import { motion } from "framer-motion";
-import { ChevronDown, ChevronRight, Circle } from "lucide-react";
+import { Hash, Network, PlayCircle, Sliders, Zap } from "lucide-react";
 import { useState } from "react";
 
-const MOCK_HISTORY = [
-  {
-    id: "1",
-    timestamp: "00:00:00",
-    agent: "alpha" as AgentId,
-    preview: "Awaiting breach initialization...",
-  },
-  {
-    id: "2",
-    timestamp: "00:00:00",
-    agent: "beta" as AgentId,
-    preview: "Standing by for dialectic engagement...",
-  },
-  {
-    id: "3",
-    timestamp: "00:00:00",
-    agent: "alpha" as AgentId,
-    preview: "No exchanges recorded yet.",
-  },
-];
-
-const agentDisplayNames: Record<AgentId, string> = {
-  alpha: "Agent Alpha",
-  beta: "Agent Beta",
-};
-
-const agentAccentText: Record<AgentId, string> = {
-  alpha: "text-primary",
-  beta: "text-secondary",
-};
-
-function getModelLabel(modelValue: string): string {
-  return (
-    AGENT_MODELS.find((model) => model.value === modelValue)?.label ??
-    modelValue
-  );
-}
-
-function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) {
-    return text || "No persona defined";
-  }
-  return `${text.slice(0, maxLength)}...`;
-}
-
 export default function Home() {
-  const [config, setConfig] = useState<DebateConfig>({
-    thesis: "",
-    alpha: {
-      model: AGENT_MODELS[0].value,
-      characterDescription: "",
-      goals: "",
-    },
-    beta: {
-      model: AGENT_MODELS[1].value,
-      characterDescription: "",
-      goals: "",
-    },
-    iterations: 5,
-  });
-
+  const [config, setConfig] = useState<DebateConfig>(debateState.defaultState);
   const [isInitializing, setIsInitializing] = useState(false);
-  const [expandedHistoryId, setExpandedHistoryId] = useState<string | null>(
-    null,
-  );
 
   async function startDebate() {
     setIsInitializing(true);
     await new Promise((resolve) => window.setTimeout(resolve, 300));
-    console.log("Initialize Breach — config:", config);
     setIsInitializing(false);
   }
 
-  function toggleHistoryItem(id: string) {
-    setExpandedHistoryId((current) => (current === id ? null : id));
+  function setInitiator(initiator: AgentId) {
+    setConfig((current) => ({ ...current, initiator }));
   }
 
   return (
-    <div className="min-h-screen bg-grid">
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[320px_1fr]">
-        <motion.aside
-          initial={{ opacity: 0, x: -16 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-col gap-4 border-r border-white/10 bg-surface/20 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-5"
-        >
-          <div>
-            <h2 className="font-heading text-xl font-semibold text-text-main">
-              Command Center
-            </h2>
-            <p className="mt-1 font-mono text-xs uppercase tracking-wider text-text-muted">
-              Dialectic Configuration
-            </p>
+    <PageShell>
+        <header className="mb-8">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#1f1f22]/60 px-3 py-1 backdrop-blur-md">
+            <Hash className="h-3 w-3 text-[#849495]" />
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#849495]">
+              SYSTEM INITIALIZATION
+            </span>
           </div>
 
-          <div className="space-y-1">
+          <h1 className="font-heading text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
+            Debate Parameters
+          </h1>
+          <p className="mt-2 max-w-2xl font-body text-sm text-[#849495] sm:text-base">
+            Configure the logical constraints and operational directives for the
+            upcoming adversarial neural synthesis.
+          </p>
+
+          <div className="mt-6 h-px w-full bg-white/5" />
+        </header>
+
+        <div className="space-y-6">
+          <GlassCard className="space-y-3">
             <label
               htmlFor="central-thesis"
-              className="font-mono text-xs uppercase tracking-wider text-text-muted"
+              className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#849495]"
             >
-              Central Thesis
+              <Network className="h-3.5 w-3.5" />
+              ПРЕДМЕТ СПОРА
             </label>
             <textarea
               id="central-thesis"
-              rows={6}
+              rows={4}
               value={config.thesis}
               onChange={(event) =>
                 setConfig((current) => ({
@@ -121,164 +63,101 @@ export default function Home() {
                   thesis: event.target.value,
                 }))
               }
-              placeholder="Define the core logical conflict to be resolved..."
-              className="w-full resize-none rounded-sm border border-white/10 bg-surface/30 px-3 py-2 font-mono text-sm text-text-main placeholder:text-text-muted/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+              placeholder="Enter the central thesis or logical conflict to be resolved..."
+              className="w-full resize-none rounded-sm border border-white/10 bg-[#131316]/50 px-4 py-3 font-mono text-sm text-[#e4e1e6] placeholder:text-[#849495]/60 focus:border-[#00f0ff] focus:outline-none focus:ring-1 focus:ring-[#00f0ff]/30"
+            />
+          </GlassCard>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <AgentConfigPanel
+              agent="alpha"
+              value={config.alpha}
+              availableModels={debateState.availableModels}
+              onChange={(alpha) =>
+                setConfig((current) => ({ ...current, alpha }))
+              }
+            />
+            <AgentConfigPanel
+              agent="beta"
+              value={config.beta}
+              availableModels={debateState.availableModels}
+              onChange={(beta) => setConfig((current) => ({ ...current, beta }))}
             />
           </div>
 
-          <AgentConfigPanel
-            agent="alpha"
-            value={config.alpha}
-            onChange={(alpha) => setConfig((current) => ({ ...current, alpha }))}
-          />
-
-          <AgentConfigPanel
-            agent="beta"
-            value={config.beta}
-            onChange={(beta) => setConfig((current) => ({ ...current, beta }))}
-          />
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
+          <GlassCard>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <label
                 htmlFor="iterations"
-                className="font-mono text-xs uppercase tracking-wider text-text-muted"
+                className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-[#849495]"
               >
-                Iterations
+                <Sliders className="h-3.5 w-3.5" />
+                МАКСИМАЛЬНОЕ КОЛИЧЕСТВО ИТЕРАЦИЙ
               </label>
-              <span className="font-mono text-sm text-primary">
-                {config.iterations}
+              <div className="flex w-full items-center gap-4 sm:max-w-md sm:flex-1 sm:justify-end">
+                <input
+                  id="iterations"
+                  type="range"
+                  min={1}
+                  max={10}
+                  value={config.iterations}
+                  onChange={(event) =>
+                    setConfig((current) => ({
+                      ...current,
+                      iterations: Number(event.target.value),
+                    }))
+                  }
+                  className="debate-slider h-1 flex-1 cursor-pointer appearance-none rounded-sm bg-white/10"
+                />
+                <span className="flex h-8 min-w-10 items-center justify-center rounded-sm border border-white/10 bg-[#131316]/50 px-2 font-mono text-sm text-white">
+                  {config.iterations}
+                </span>
+              </div>
+            </div>
+          </GlassCard>
+
+          <GlassCard>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-[#849495]">
+                <PlayCircle className="h-3.5 w-3.5" />
+                КТО НАЧИНАЕТ?
               </span>
-            </div>
-            <input
-              id="iterations"
-              type="range"
-              min={1}
-              max={10}
-              value={config.iterations}
-              onChange={(event) =>
-                setConfig((current) => ({
-                  ...current,
-                  iterations: Number(event.target.value),
-                }))
-              }
-              className="h-1 w-full cursor-pointer appearance-none rounded-sm bg-white/10 accent-primary"
-            />
-            <div className="flex justify-between font-mono text-xs text-text-muted">
-              <span>1</span>
-              <span>10</span>
-            </div>
-          </div>
-
-          <NeonButton
-            variant="alpha"
-            onClick={startDebate}
-            disabled={isInitializing}
-          >
-            {isInitializing ? "Initializing..." : "Initialize Breach"}
-          </NeonButton>
-        </motion.aside>
-
-        <motion.main
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex flex-col gap-6 p-6 lg:p-8"
-        >
-          <header>
-            <h1 className="font-heading text-3xl font-bold tracking-tight text-text-main">
-              LOGOS AI
-            </h1>
-            <p className="mt-1 font-mono text-sm uppercase tracking-widest text-text-muted">
-              Synthetic Dialectic — Adversarial Neural Synthesis
-            </p>
-          </header>
-
-          <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {(["alpha", "beta"] as AgentId[]).map((agentId) => {
-              const agentConfig = config[agentId];
-              return (
-                <GlassCard key={agentId} accent={agentId} className="space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h2
-                        className={`font-heading text-lg font-semibold ${agentAccentText[agentId]}`}
-                      >
-                        {agentDisplayNames[agentId]}
-                      </h2>
-                      <p className="mt-0.5 font-mono text-xs text-text-muted">
-                        {getModelLabel(agentConfig.model)}
-                      </p>
-                    </div>
-                    <span className="flex items-center gap-1.5 rounded-sm bg-surface/50 px-2 py-1 font-mono text-xs uppercase tracking-wider text-text-muted">
-                      <Circle className="h-2 w-2 fill-current" />
-                      Idle
-                    </span>
-                  </div>
-                  <p className="font-body text-sm leading-relaxed text-text-main/80">
-                    {truncateText(agentConfig.characterDescription, 120)}
-                  </p>
-                </GlassCard>
-              );
-            })}
-          </section>
-
-          <GlassCard className="space-y-3">
-            <h2 className="font-heading text-lg font-semibold text-text-main">
-              Discussion History
-            </h2>
-            <div className="space-y-2">
-              {MOCK_HISTORY.map((item) => {
-                const isExpanded = expandedHistoryId === item.id;
-                return (
-                  <div
-                    key={item.id}
-                    className="overflow-hidden rounded-sm border border-white/10 bg-surface/20"
-                  >
+              <div className="inline-flex w-full rounded-sm border border-white/10 bg-[#131316]/50 p-0.5 sm:w-auto">
+                {(["alpha", "beta"] as AgentId[]).map((agentId) => {
+                  const isActive = config.initiator === agentId;
+                  const label = agentId === "alpha" ? "АГЕНТ 1" : "АГЕНТ 2";
+                  return (
                     <button
+                      key={agentId}
                       type="button"
-                      onClick={() => toggleHistoryItem(item.id)}
-                      className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-white/5"
+                      onClick={() => setInitiator(agentId)}
+                      className={`flex-1 rounded-sm px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors sm:flex-none ${
+                        isActive
+                          ? "border border-white/20 bg-white/10 text-white"
+                          : "border border-transparent text-[#849495] hover:text-white"
+                      }`}
                     >
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 shrink-0 text-text-muted" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 shrink-0 text-text-muted" />
-                      )}
-                      <span className="font-mono text-xs text-text-muted">
-                        {item.timestamp}
-                      </span>
-                      <span
-                        className={`font-mono text-xs uppercase ${agentAccentText[item.agent]}`}
-                      >
-                        {item.agent}
-                      </span>
-                      <span className="truncate font-body text-sm text-text-main/70">
-                        {item.preview}
-                      </span>
+                      {label}
                     </button>
-                    {isExpanded && (
-                      <div className="border-t border-white/10 px-3 py-2 font-body text-sm text-text-muted">
-                        {item.preview}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </GlassCard>
 
-          <GlassCard className="space-y-3">
-            <h2 className="font-heading text-lg font-semibold text-text-main">
-              Joint Decision
-            </h2>
-            <div className="rounded-sm bg-surface/40 p-4 font-mono text-sm leading-relaxed text-text-muted">
-              <span className="text-primary">{">"}</span> Awaiting breach
-              initialization...
-            </div>
-          </GlassCard>
-        </motion.main>
-      </div>
-    </div>
+          <div className="flex justify-stretch pt-2 sm:justify-end">
+            <NeonButton
+              onClick={startDebate}
+              disabled={isInitializing}
+              icon={<Zap className="h-4 w-4" />}
+              className="w-full justify-center sm:w-auto"
+            >
+              {isInitializing
+                ? "Инициализация..."
+                : "ИНИЦИАЛИЗИРОВАТЬ БРЕШЬ"}
+            </NeonButton>
+          </div>
+        </div>
+    </PageShell>
   );
 }

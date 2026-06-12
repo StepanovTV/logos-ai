@@ -1,0 +1,23 @@
+{
+  "availableModels": [
+    { "value": "gpt-4o", "label": "GPT-4o" },
+    { "value": "claude-3.5-sonnet", "label": "Claude 3.5 Sonnet" },
+    { "value": "gemini-1.5-pro", "label": "Gemini 1.5 Pro" },
+    { "value": "deepseek-r1", "label": "DeepSeek R1" }
+  ],
+  "defaultState": {
+    "thesis": "",
+    "alpha": {
+      "model": "gpt-4o",
+      "characterDescription": "Analytical, strict logic, utilitarian approach prioritizing quantifiable outcomes and systemic efficiency.",
+      "goals": "Deconstruct opposition argument based on empirical data and structural logic."
+    },
+    "beta": {
+      "model": "gpt-4o",
+      "characterDescription": "Empathetic, holistic thinking, deontological emphasis on human rights and intrinsic values.",
+      "goals": "Argue for human-centric ethical outcomes and dismantle purely utilitarian frameworks."
+    },
+    "iterations": 10,
+    "initiator": "alpha"
+  }
+}
