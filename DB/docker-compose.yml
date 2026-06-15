@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: logos_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: logos
+      POSTGRES_PASSWORD: logos_pass
+      POSTGRES_DB: logos_db
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logos -d logos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

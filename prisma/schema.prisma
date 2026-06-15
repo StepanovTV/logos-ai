@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AppSetting {
+  key   String @id
+  value Json
+}
+
+model Model {
+  id             String  @id
+  name           String
+  provider       String
+  icon           String
+  active         Boolean @default(false)
+  accent         String?
+  paramCount     String
+  contextWindow  String
+  releaseDate    String
+  reasoningStyle String
+}
+
+model ArchiveSession {
+  id         String  @id
+  category   String
+  date       String
+  title      String
+  agentAlpha String
+  agentBeta  String
+  winner     String
+  resolution String
+  nodes      Int?
+  cpu        String?
+  error      String?
+}
+
+model DebateSession {
+  sessionId         String          @id
+  topic             String
+  status            String
+  alphaName         String
+  alphaFramework    String
+  alphaStatus       String
+  betaName          String
+  betaFramework     String
+  betaStatus        String
+  jointDecisionText String?
+  alphaAgreement    Int?
+  betaAgreement     Int?
+  messages          DebateMessage[]
+}
+
+model DebateMessage {
+  id         String        @id
+  sessionId  String
+  session    DebateSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  agent      String
+  timestamp  String
+  confidence Int
+  text       String
+  evidence   String[]
+}

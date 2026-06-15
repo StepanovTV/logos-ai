@@ -38,6 +38,9 @@ function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") {
     return pathname === "/";
   }
+  if (href === "/active-session") {
+    return pathname.startsWith("/session") || pathname === "/active-session";
+  }
   return pathname.startsWith(href);
 }
 
@@ -130,7 +133,7 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex min-h-screen w-[280px] shrink-0 flex-col justify-between border-r border-white/5 bg-[#131316] transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[280px] shrink-0 flex-col justify-between border-r border-white/5 bg-[#131316] transition-transform duration-300 lg:z-30 lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

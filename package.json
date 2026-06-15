@@ -6,10 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:start": "npm --prefix DB start",
+    "db:stop": "npm --prefix DB stop",
+    "db:logs": "npm --prefix DB logs",
+    "db:reset": "npm --prefix DB reset",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:setup": "npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
     "@openrouter/ai-sdk-provider": "^2.9.1",
+    "@prisma/client": "^6.19.3",
     "ai": "^6.0.202",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.17.0",
@@ -24,7 +33,12 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "prisma": "^6.19.3",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
