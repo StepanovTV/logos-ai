@@ -11,7 +11,6 @@ type TopNavTab = {
 
 const tabs: TopNavTab[] = [
   { label: "Dashboard", href: "/" },
-  { label: "Arena", href: "/active-session" },
   { label: "Archives", href: "/history" },
 ];
 

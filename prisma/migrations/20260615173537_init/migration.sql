@@ -25,6 +25,7 @@ CREATE TABLE "Model" (
 -- CreateTable
 CREATE TABLE "ArchiveSession" (
     "id" TEXT NOT NULL,
+    "debateSessionId" TEXT,
     "category" TEXT NOT NULL,
     "date" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -69,6 +70,12 @@ CREATE TABLE "DebateMessage" (
 
     CONSTRAINT "DebateMessage_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ArchiveSession_debateSessionId_key" ON "ArchiveSession"("debateSessionId");
+
+-- AddForeignKey
+ALTER TABLE "ArchiveSession" ADD CONSTRAINT "ArchiveSession_debateSessionId_fkey" FOREIGN KEY ("debateSessionId") REFERENCES "DebateSession"("sessionId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DebateMessage" ADD CONSTRAINT "DebateMessage_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "DebateSession"("sessionId") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -38,6 +38,7 @@ export default async function Home() {
   const [models, defaultSetting] = await withDatabase(() =>
     Promise.all([
       prisma.model.findMany({
+        where: { active: true },
         orderBy: { name: "asc" },
       }),
       prisma.appSetting.findUnique({

@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LOGOS AI — Synthetic Dialectic
+
+Analytical web platform for structured debates between two autonomous AI agents (Agent Alpha and Agent Beta). Configure personas, models, and debate parameters, then visualize the dialectic exchange and joint consensus.
+
+## Tech Stack
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS 4** + **Framer Motion**
+- **PostgreSQL 15** (Docker) + **Prisma 6**
+- **Vercel AI SDK** + **OpenRouter** (planned for live debate streaming)
+
+## Prerequisites
+
+- Node.js 20+
+- Docker (for local PostgreSQL)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Configure environment
+cp .env.example .env
+
+# 3. Start database, run migrations, seed data
+npm run db:setup
+
+# 4. Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run db:setup` | Start Postgres + migrate + seed |
+| `npm run db:start` | Start Docker container |
+| `npm run db:stop` | Stop Docker container |
+| `npm run db:migrate` | Run Prisma migrations |
+| `npm run db:seed` | Seed from `src/fixtures/*.json` |
+| `npm run db:studio` | Open Prisma Studio |
+| `npm run db:reset` | Destroy volume and restart |
 
-## Learn More
+Database connection: `postgresql://logos:logos_pass@localhost:5432/logos_db`
 
-To learn more about Next.js, take a look at the following resources:
+## Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Route | Description |
+|-------|-------------|
+| `/` | Command Center — configure and start a debate |
+| `/session/[id]` | Active or completed debate view |
+| `/history` | Battle history with search |
+| `/models` | Model registry |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/              # Pages (App Router)
+├── actions/          # Server Actions
+├── components/       # UI components by feature
+├── lib/              # Prisma client, mappers, DB helpers
+├── fixtures/         # JSON seed data
+├── types/            # Domain types
+prisma/               # Schema, migrations, seed
+DB/                   # Docker Compose for PostgreSQL
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Documentation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| File | Purpose |
+|------|---------|
+| `AGENTS.md` | AI agent guidelines, architecture, DB schema |
+| `logos_ai_project_brief.md` | Product brief with implementation status |
+| `DESIGN.md` | Design system tokens and visual language |
+
+## Scripts
+
+```bash
+npm run dev       # Development server
+npm run build     # Production build
+npm run start     # Production server
+npm run lint      # ESLint
+```

@@ -10,7 +10,7 @@
     "db:start": "npm --prefix DB start",
     "db:stop": "npm --prefix DB stop",
     "db:logs": "npm --prefix DB logs",
-    "db:reset": "npm --prefix DB reset",
+    "db:reset": "npm --prefix DB run reset",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",

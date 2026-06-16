@@ -4,17 +4,16 @@ import {
   HelpCircle,
   History,
   Menu,
-  MessageSquare,
   PlusSquare,
   Settings,
   Target,
-  User,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SpitballLogo } from "../brand/SpitballLogo";
 
 type NavItem = {
   label: string;
@@ -24,7 +23,6 @@ type NavItem = {
 
 const mainNavItems: NavItem[] = [
   { label: "New Debate", href: "/", icon: PlusSquare },
-  { label: "Active Session", href: "/active-session", icon: MessageSquare },
   { label: "History", href: "/history", icon: History },
   { label: "Models", href: "/models", icon: Target },
 ];
@@ -37,9 +35,6 @@ const bottomNavItems: NavItem[] = [
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") {
     return pathname === "/";
-  }
-  if (href === "/active-session") {
-    return pathname.startsWith("/session") || pathname === "/active-session";
   }
   return pathname.startsWith(href);
 }
@@ -112,14 +107,7 @@ export function Sidebar() {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <div className="text-center">
-          <p className="font-heading text-sm font-bold text-white">
-            Command Center
-          </p>
-          <p className="font-mono text-[10px] uppercase tracking-wider text-[#849495]">
-            Analytical Mode
-          </p>
-        </div>
+        <SpitballLogo className="h-8 w-auto max-w-[140px]" />
         <div className="h-9 w-9" aria-hidden="true" />
       </header>
 
@@ -139,19 +127,7 @@ export function Sidebar() {
       >
         <div>
           <div className="flex items-center justify-between px-5 py-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                <User className="h-4 w-4 text-[#849495]" />
-              </div>
-              <div>
-                <p className="font-heading text-sm font-bold text-white">
-                  Command Center
-                </p>
-                <p className="font-mono text-[10px] uppercase tracking-wider text-[#849495]">
-                  Analytical Mode
-                </p>
-              </div>
-            </div>
+            <SpitballLogo className="h-12 w-auto max-w-[270px]" />
             <button
               type="button"
               aria-label="Close navigation menu"

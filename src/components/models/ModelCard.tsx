@@ -8,6 +8,7 @@ import type { LucideIcon } from "lucide-react";
 type ModelCardProps = {
   model: RegistryModel;
   onToggle: (id: string) => void;
+  disabled?: boolean;
 };
 
 const iconMap: Record<ModelIcon, LucideIcon> = {
@@ -35,7 +36,7 @@ const accentStyles: Record<
   },
 };
 
-export function ModelCard({ model, onToggle }: ModelCardProps) {
+export function ModelCard({ model, onToggle, disabled = false }: ModelCardProps) {
   const Icon = iconMap[model.icon];
   const isActive = model.active;
   const accent = isActive ? model.accent : undefined;
@@ -76,6 +77,7 @@ export function ModelCard({ model, onToggle }: ModelCardProps) {
           aria-checked={isActive}
           aria-label={`${isActive ? "Deactivate" : "Activate"} ${model.name}`}
           onClick={() => onToggle(model.id)}
+          disabled={disabled}
           className={`relative flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors ${
             isActive
               ? "border-[#00f0ff]/50 bg-[#00f0ff]"

@@ -1,6 +1,7 @@
 [
   {
     "id": "arch-001",
+    "debateSessionId": "sys-arch-001",
     "category": "EPISTEMOLOGY",
     "date": "2023.10.14",
     "title": "Nature of Synthetic Truth",
@@ -12,6 +13,7 @@
   },
   {
     "id": "arch-002",
+    "debateSessionId": "sys-arch-002",
     "category": "RESOURCE ALLOCATION",
     "date": "2023.10.12",
     "title": "Zero-Sum Energy Distribution",
@@ -23,6 +25,7 @@
   },
   {
     "id": "arch-003",
+    "debateSessionId": "sys-arch-003",
     "category": "ETHICS",
     "date": "2023.10.10",
     "title": "Utilitarian Calculus bounds",
@@ -34,6 +37,7 @@
   },
   {
     "id": "arch-004",
+    "debateSessionId": "sys-arch-004",
     "category": "SYNTAX",
     "date": "2023.10.08",
     "title": "Linguistic Drift Optimization",

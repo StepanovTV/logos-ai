@@ -1,4 +1,4 @@
-export type ArchiveWinner = "alpha" | "beta" | "draw";
+export type ArchiveWinner = "alpha" | "beta" | "draw" | "pending";
 
 export type ArchiveMetrics =
   | { nodes: number; cpu: string }
@@ -6,6 +6,7 @@ export type ArchiveMetrics =
 
 export type ArchiveSession = {
   id: string;
+  debateSessionId: string | null;
   category: string;
   date: string;
   title: string;

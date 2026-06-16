@@ -1,4 +1,7 @@
-import type { ArchiveSession as ArchiveSessionRecord } from "@prisma/client";
+import type {
+  ArchiveSession as ArchiveSessionRecord,
+  Model as ModelRecord,
+} from "@prisma/client";
 
 import type {
   AgentId,
@@ -7,6 +10,16 @@ import type {
   JointDecision,
 } from "@/types/debate";
 import type { ArchiveSession, ArchiveWinner } from "@/types/history";
+import type {
+  ModelAccent,
+  ModelIcon,
+  RegistryModel,
+} from "@/types/models";
+
+const DEFAULT_MAX_ACTIVE_NODES = 16;
+
+const MODEL_ICONS: ModelIcon[] = ["brain", "cpu", "infinity", "network"];
+const MODEL_ACCENTS: ModelAccent[] = ["alpha", "beta"];
 
 type DebateSessionWithMessages = {
   sessionId: string;
@@ -34,6 +47,7 @@ type DebateSessionWithMessages = {
 export function mapArchiveSession(record: ArchiveSessionRecord): ArchiveSession {
   return {
     id: record.id,
+    debateSessionId: record.debateSessionId,
     category: record.category,
     date: record.date,
     title: record.title,
@@ -89,4 +103,41 @@ function mapJointDecision(record: DebateSessionWithMessages): JointDecision {
 
 export function hasJointDecision(record: DebateSessionWithMessages): boolean {
   return record.jointDecisionText !== null;
+}
+
+function isModelIcon(value: string): value is ModelIcon {
+  return MODEL_ICONS.includes(value as ModelIcon);
+}
+
+function isModelAccent(value: string): value is ModelAccent {
+  return MODEL_ACCENTS.includes(value as ModelAccent);
+}
+
+export function mapRegistryModel(record: ModelRecord): RegistryModel {
+  return {
+    id: record.id,
+    name: record.name,
+    provider: record.provider,
+    icon: isModelIcon(record.icon) ? record.icon : "brain",
+    active: record.active,
+    accent:
+      record.accent && isModelAccent(record.accent) ? record.accent : undefined,
+    paramCount: record.paramCount,
+    contextWindow: record.contextWindow,
+    releaseDate: record.releaseDate,
+    reasoningStyle: record.reasoningStyle,
+  };
+}
+
+export function resolveMaxActiveNodes(registrySetting?: unknown): number {
+  if (
+    registrySetting &&
+    typeof registrySetting === "object" &&
+    "maxActiveNodes" in registrySetting &&
+    typeof registrySetting.maxActiveNodes === "number"
+  ) {
+    return registrySetting.maxActiveNodes;
+  }
+
+  return DEFAULT_MAX_ACTIVE_NODES;
 }

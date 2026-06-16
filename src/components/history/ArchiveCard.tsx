@@ -2,6 +2,7 @@
 
 import type { ArchiveSession, ArchiveWinner } from "@/types/history";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 type ArchiveCardProps = {
   session: ArchiveSession;
@@ -29,6 +30,11 @@ const winnerStyles: Record<ArchiveWinner, WinnerStyles> = {
     categoryColor: "text-[#849495]",
     hoverGlow: "hover:shadow-[0_0_20px_rgba(132,148,149,0.15)]",
   },
+  pending: {
+    borderAccent: "border-l-4 border-l-[#00f0ff]",
+    categoryColor: "text-[#00f0ff]",
+    hoverGlow: "hover:shadow-[0_0_20px_rgba(0,240,255,0.15)]",
+  },
 };
 
 function isErrorMetrics(
@@ -40,6 +46,7 @@ function isErrorMetrics(
 export function ArchiveCard({ session }: ArchiveCardProps) {
   const styles = winnerStyles[session.winner];
   const isDraw = session.winner === "draw";
+  const isPending = session.winner === "pending";
 
   return (
     <motion.article
@@ -71,7 +78,11 @@ export function ArchiveCard({ session }: ArchiveCardProps) {
           {session.agentAlpha}
         </span>
 
-        {isDraw ? (
+        {isPending ? (
+          <span className="rounded border border-[#00f0ff]/30 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#00f0ff]">
+            LIVE
+          </span>
+        ) : isDraw ? (
           <span className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#849495]">
             DRAW
           </span>
@@ -95,20 +106,31 @@ export function ArchiveCard({ session }: ArchiveCardProps) {
         </p>
       </div>
 
-      <div className="mt-auto flex gap-2 pt-6">
-        {isErrorMetrics(session.metrics) ? (
-          <span className="rounded border border-[#ffb4ab]/30 bg-[#93000a]/20 px-2 py-1 font-mono text-[10px] text-[#ffb4ab]">
-            {session.metrics.error}
-          </span>
-        ) : (
-          <>
-            <span className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-[#849495]">
-              {session.metrics.nodes} Nodes
+      <div className="mt-auto flex items-end justify-between gap-2 pt-6">
+        <div className="flex flex-wrap gap-2">
+          {isErrorMetrics(session.metrics) ? (
+            <span className="rounded border border-[#ffb4ab]/30 bg-[#93000a]/20 px-2 py-1 font-mono text-[10px] text-[#ffb4ab]">
+              {session.metrics.error}
             </span>
-            <span className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-[#849495]">
-              {session.metrics.cpu} CPU
-            </span>
-          </>
+          ) : (
+            <>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-[#849495]">
+                {session.metrics.nodes} Nodes
+              </span>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-[#849495]">
+                {session.metrics.cpu} CPU
+              </span>
+            </>
+          )}
+        </div>
+
+        {session.debateSessionId && (
+          <Link
+            href={`/session/${session.debateSessionId}`}
+            className="shrink-0 rounded-sm border border-white/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-[#e9b3ff] transition-all hover:border-[#e9b3ff] hover:shadow-[0_0_15px_rgba(233,179,255,0.3)]"
+          >
+            VIEW DEBATE
+          </Link>
         )}
       </div>
     </motion.article>

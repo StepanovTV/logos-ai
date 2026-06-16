@@ -26,17 +26,19 @@ model Model {
 }
 
 model ArchiveSession {
-  id         String  @id
-  category   String
-  date       String
-  title      String
-  agentAlpha String
-  agentBeta  String
-  winner     String
-  resolution String
-  nodes      Int?
-  cpu        String?
-  error      String?
+  id              String         @id
+  debateSessionId String?        @unique
+  debateSession   DebateSession? @relation(fields: [debateSessionId], references: [sessionId])
+  category        String
+  date            String
+  title           String
+  agentAlpha      String
+  agentBeta       String
+  winner          String
+  resolution      String
+  nodes           Int?
+  cpu             String?
+  error           String?
 }
 
 model DebateSession {
@@ -53,6 +55,7 @@ model DebateSession {
   alphaAgreement    Int?
   betaAgreement     Int?
   messages          DebateMessage[]
+  archive           ArchiveSession?
 }
 
 model DebateMessage {
