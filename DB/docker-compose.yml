@@ -15,3 +15,31 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - logos_network
+
+  pgadmin:
+    image: dpage/pgadmin4:9.15
+    container_name: logos_pgadmin
+    user: root
+    entrypoint: /bin/sh -c "chmod 600 /pgpass && /entrypoint.sh"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: logos_admin
+      PGADMIN_LISTEN_PORT: 5050
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "127.0.0.1:5050:5050"
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.json:ro
+      - ./pgpass:/pgpass
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - logos_network
+
+networks:
+  logos_network:

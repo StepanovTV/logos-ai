@@ -43,3 +43,4 @@ package-lock.json
 
 # local postgres data
 /DB/data
+/DB/pgadmin_data
