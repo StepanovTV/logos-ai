@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { withDatabase } from "@/lib/with-database";
 import type { DebateConfig } from "@/types/debate";
 
 function buildAgentName(label: string, modelId: string): string {
@@ -20,19 +21,21 @@ export async function initializeBreach(config: DebateConfig): Promise<void> {
 
   const sessionId = `sys-${Date.now()}`;
 
-  await prisma.debateSession.create({
-    data: {
-      sessionId,
-      topic: config.thesis.trim(),
-      status: "initialized",
-      alphaName: buildAgentName("Agent Alpha", config.alpha.model),
-      alphaFramework: buildFramework(config.alpha),
-      alphaStatus: config.initiator === "alpha" ? "active" : "idle",
-      betaName: buildAgentName("Agent Beta", config.beta.model),
-      betaFramework: buildFramework(config.beta),
-      betaStatus: config.initiator === "beta" ? "active" : "idle",
-    },
-  });
+  await withDatabase(() =>
+    prisma.debateSession.create({
+      data: {
+        sessionId,
+        topic: config.thesis.trim(),
+        status: "initialized",
+        alphaName: buildAgentName("Agent Alpha", config.alpha.model),
+        alphaFramework: buildFramework(config.alpha),
+        alphaStatus: config.initiator === "alpha" ? "active" : "idle",
+        betaName: buildAgentName("Agent Beta", config.beta.model),
+        betaFramework: buildFramework(config.beta),
+        betaStatus: config.initiator === "beta" ? "active" : "idle",
+      },
+    }),
+  );
 
   redirect(`/session/${sessionId}`);
 }

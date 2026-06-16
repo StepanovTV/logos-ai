@@ -4,7 +4,10 @@ import { JointDecisionTerminal } from "@/components/session/JointDecisionTermina
 import { PageShell } from "@/components/layout/PageShell";
 import { hasJointDecision, mapDebateSession } from "@/lib/mappers";
 import { prisma } from "@/lib/prisma";
+import { withDatabase } from "@/lib/with-database";
 import { notFound } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 type SessionPageProps = {
   params: Promise<{ id: string }>;
@@ -13,14 +16,16 @@ type SessionPageProps = {
 export default async function SessionPage({ params }: SessionPageProps) {
   const { id } = await params;
 
-  const record = await prisma.debateSession.findUnique({
-    where: { sessionId: id },
-    include: {
-      messages: {
-        orderBy: { timestamp: "asc" },
+  const record = await withDatabase(() =>
+    prisma.debateSession.findUnique({
+      where: { sessionId: id },
+      include: {
+        messages: {
+          orderBy: { timestamp: "asc" },
+        },
       },
-    },
-  });
+    }),
+  );
 
   if (!record) {
     notFound();

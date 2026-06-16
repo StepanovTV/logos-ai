@@ -4,6 +4,8 @@ import { initializeBreach } from "@/actions/debate";
 import { AgentConfigPanel } from "@/components/features/AgentConfigPanel";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { NeonButton } from "@/components/ui/NeonButton";
+import { DatabaseErrorView } from "@/components/errors/DatabaseErrorView";
+import { isDatabaseConnectionError } from "@/lib/db-errors";
 import type { AgentId, DebateConfig } from "@/types/debate";
 import { Hash, Network, PlayCircle, Sliders, Zap } from "lucide-react";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
@@ -26,6 +28,7 @@ export function CommandCenterForm({
   const [config, setConfig] = useState<DebateConfig>(defaultConfig);
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasDatabaseError, setHasDatabaseError] = useState(false);
 
   function setInitiator(initiator: AgentId) {
     setConfig((current) => ({ ...current, initiator }));
@@ -33,6 +36,7 @@ export function CommandCenterForm({
 
   function startDebate() {
     setErrorMessage(null);
+    setHasDatabaseError(false);
 
     startTransition(async () => {
       try {
@@ -40,6 +44,11 @@ export function CommandCenterForm({
       } catch (error) {
         if (isRedirectError(error)) {
           throw error;
+        }
+
+        if (isDatabaseConnectionError(error)) {
+          setHasDatabaseError(true);
+          return;
         }
 
         setErrorMessage(
@@ -173,20 +182,26 @@ export function CommandCenterForm({
           </div>
         </GlassCard>
 
-        {errorMessage && (
-          <p className="font-mono text-xs text-[#ffb4ab]">{errorMessage}</p>
-        )}
+        {hasDatabaseError ? (
+          <DatabaseErrorView onRetry={startDebate} />
+        ) : (
+          <>
+            {errorMessage && (
+              <p className="font-mono text-xs text-[#ffb4ab]">{errorMessage}</p>
+            )}
 
-        <div className="flex justify-stretch pt-2 sm:justify-end">
-          <NeonButton
-            onClick={startDebate}
-            disabled={isPending}
-            icon={<Zap className="h-4 w-4" />}
-            className="w-full justify-center sm:w-auto"
-          >
-            {isPending ? "Инициализация..." : "INITIALIZE DEBATE"}
-          </NeonButton>
-        </div>
+            <div className="flex justify-stretch pt-2 sm:justify-end">
+              <NeonButton
+                onClick={startDebate}
+                disabled={isPending}
+                icon={<Zap className="h-4 w-4" />}
+                className="w-full justify-center sm:w-auto"
+              >
+                {isPending ? "Инициализация..." : "INITIALIZE DEBATE"}
+              </NeonButton>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
