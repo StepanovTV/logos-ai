@@ -29,6 +29,7 @@ model ArchiveSession {
   id              String         @id
   debateSessionId String?        @unique
   debateSession   DebateSession? @relation(fields: [debateSessionId], references: [sessionId])
+  status          String         @default("initialized")
   category        String
   date            String
   title           String
@@ -54,6 +55,13 @@ model DebateSession {
   jointDecisionText String?
   alphaAgreement    Int?
   betaAgreement     Int?
+  iterations        Int             @default(5)
+  initiator         String          @default("alpha")
+  alphaModelId      String
+  betaModelId       String
+  currentTurn       Int             @default(0)
+  startedAt         DateTime?
+  completedAt       DateTime?
   messages          DebateMessage[]
   archive           ArchiveSession?
 }

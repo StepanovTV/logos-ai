@@ -9,7 +9,11 @@ import type {
   DebateSession,
   JointDecision,
 } from "@/types/debate";
-import type { ArchiveSession, ArchiveWinner } from "@/types/history";
+import {
+  normalizeArchiveStatus,
+  type ArchiveSession,
+  type ArchiveWinner,
+} from "@/types/history";
 import type {
   ModelAccent,
   ModelIcon,
@@ -34,6 +38,13 @@ type DebateSessionWithMessages = {
   jointDecisionText: string | null;
   alphaAgreement: number | null;
   betaAgreement: number | null;
+  iterations: number;
+  initiator: string;
+  alphaModelId: string;
+  betaModelId: string;
+  currentTurn: number;
+  startedAt: Date | null;
+  completedAt: Date | null;
   messages: {
     id: string;
     agent: string;
@@ -45,9 +56,15 @@ type DebateSessionWithMessages = {
 };
 
 export function mapArchiveSession(record: ArchiveSessionRecord): ArchiveSession {
+  const hasError = record.error !== null;
+
   return {
     id: record.id,
     debateSessionId: record.debateSessionId,
+    status: normalizeArchiveStatus(record.status, {
+      winner: record.winner,
+      hasError,
+    }),
     category: record.category,
     date: record.date,
     title: record.title,
@@ -87,6 +104,15 @@ export function mapDebateSession(record: DebateSessionWithMessages): DebateSessi
         framework: record.betaFramework,
         status: record.betaStatus,
       },
+    },
+    config: {
+      iterations: record.iterations,
+      initiator: record.initiator as AgentId,
+      alphaModelId: record.alphaModelId,
+      betaModelId: record.betaModelId,
+      currentTurn: record.currentTurn,
+      startedAt: record.startedAt,
+      completedAt: record.completedAt,
     },
     history,
     jointDecision: mapJointDecision(record),

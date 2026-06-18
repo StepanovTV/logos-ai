@@ -32,6 +32,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `OPENROUTER_API_KEY` | No (Phase 2+) | OpenRouter API key for live AI debate streaming |
+
+Copy `.env.example` to `.env`. The app starts without `OPENROUTER_API_KEY`; it is validated only when AI routes are invoked.
+
 ## Database Commands
 
 | Command | Description |
@@ -75,6 +84,7 @@ DB/                   # Docker Compose for PostgreSQL
 |------|---------|
 | `AGENTS.md` | AI agent guidelines, architecture, DB schema |
 | `logos_ai_project_brief.md` | Product brief with implementation status |
+| `logos_ai_implementation_plan.md` | Step-by-step implementation plan |
 | `DESIGN.md` | Design system tokens and visual language |
 
 ## Scripts

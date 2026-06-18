@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  ARCHIVE_OUTCOME_META,
+  getArchiveStatusMeta,
+} from "@/constants/archiveStatus";
 import type { ArchiveSession, ArchiveWinner } from "@/types/history";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -37,32 +41,91 @@ const winnerStyles: Record<ArchiveWinner, WinnerStyles> = {
   },
 };
 
+const pendingBorderStyles: Record<
+  ArchiveSession["status"],
+  string
+> = {
+  initialized: "border-l-4 border-l-[#849495]",
+  active: "border-l-4 border-l-[#00f0ff]",
+  consensus_reached: "border-l-4 border-l-[#81c784]",
+  timeout: "border-l-4 border-l-[#ffb74d]",
+  failed: "border-l-4 border-l-[#ffb4ab]",
+  archived: "border-l-4 border-l-[#849495]",
+};
+
 function isErrorMetrics(
   metrics: ArchiveSession["metrics"],
 ): metrics is { error: string } {
   return "error" in metrics;
 }
 
+function resolveBorderAccent(session: ArchiveSession): string {
+  if (session.winner !== "pending") {
+    return winnerStyles[session.winner].borderAccent;
+  }
+
+  return pendingBorderStyles[session.status] ?? pendingBorderStyles.initialized;
+}
+
+function resolveHoverGlow(session: ArchiveSession): string {
+  if (session.winner !== "pending") {
+    return winnerStyles[session.winner].hoverGlow;
+  }
+
+  if (session.status === "active") {
+    return winnerStyles.pending.hoverGlow;
+  }
+
+  return "hover:shadow-[0_0_20px_rgba(132,148,149,0.1)]";
+}
+
+function resolveCategoryColor(session: ArchiveSession): string {
+  if (session.winner !== "pending") {
+    return winnerStyles[session.winner].categoryColor;
+  }
+
+  return winnerStyles.pending.categoryColor;
+}
+
 export function ArchiveCard({ session }: ArchiveCardProps) {
-  const styles = winnerStyles[session.winner];
-  const isDraw = session.winner === "draw";
-  const isPending = session.winner === "pending";
+  const statusMeta = getArchiveStatusMeta(session.status);
+  const showOutcome = session.winner !== "pending";
+  const outcomeMeta = showOutcome
+    ? ARCHIVE_OUTCOME_META[session.winner as Exclude<typeof session.winner, "pending">]
+    : null;
+  const showErrorBadge =
+    (session.status === "timeout" || session.status === "failed") &&
+    isErrorMetrics(session.metrics);
 
   return (
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
-      className={`flex flex-col rounded-lg border border-white/10 bg-[#1f1f22]/60 p-6 backdrop-blur-md transition-shadow duration-200 ${styles.borderAccent} ${styles.hoverGlow}`}
+      className={`flex flex-col rounded-lg border border-white/10 bg-[#1f1f22]/60 p-6 backdrop-blur-md transition-shadow duration-200 ${resolveBorderAccent(session)} ${resolveHoverGlow(session)}`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-2">
         <span
-          className={`font-mono text-[10px] uppercase tracking-wider ${styles.categoryColor}`}
+          className={`font-mono text-[10px] uppercase tracking-wider ${resolveCategoryColor(session)}`}
         >
           {session.category}
         </span>
-        <span className="rounded border border-white/10 px-2 py-0.5 font-mono text-[10px] text-[#849495]">
-          {session.date}
-        </span>
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
+          <span
+            className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${statusMeta.className}`}
+          >
+            {statusMeta.label}
+          </span>
+          {outcomeMeta && (
+            <span
+              className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${outcomeMeta.className}`}
+            >
+              {outcomeMeta.label}
+            </span>
+          )}
+          <span className="rounded border border-white/10 px-2 py-0.5 font-mono text-[10px] text-[#849495]">
+            {session.date}
+          </span>
+        </div>
       </div>
 
       <h3 className="mt-3 font-heading text-2xl font-semibold leading-tight text-white">
@@ -78,17 +141,7 @@ export function ArchiveCard({ session }: ArchiveCardProps) {
           {session.agentAlpha}
         </span>
 
-        {isPending ? (
-          <span className="rounded border border-[#00f0ff]/30 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#00f0ff]">
-            LIVE
-          </span>
-        ) : isDraw ? (
-          <span className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#849495]">
-            DRAW
-          </span>
-        ) : (
-          <span className="text-[#849495]">VS</span>
-        )}
+        <span className="text-[#849495]">VS</span>
 
         <span className="flex items-center gap-1.5">
           {session.agentBeta}
@@ -108,11 +161,11 @@ export function ArchiveCard({ session }: ArchiveCardProps) {
 
       <div className="mt-auto flex items-end justify-between gap-2 pt-6">
         <div className="flex flex-wrap gap-2">
-          {isErrorMetrics(session.metrics) ? (
+          {showErrorBadge && isErrorMetrics(session.metrics) ? (
             <span className="rounded border border-[#ffb4ab]/30 bg-[#93000a]/20 px-2 py-1 font-mono text-[10px] text-[#ffb4ab]">
               {session.metrics.error}
             </span>
-          ) : (
+          ) : !isErrorMetrics(session.metrics) ? (
             <>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-[#849495]">
                 {session.metrics.nodes} Nodes
@@ -121,7 +174,7 @@ export function ArchiveCard({ session }: ArchiveCardProps) {
                 {session.metrics.cpu} CPU
               </span>
             </>
-          )}
+          ) : null}
         </div>
 
         {session.debateSessionId && (

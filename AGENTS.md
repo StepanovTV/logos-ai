@@ -40,11 +40,14 @@ npm run db:studio    # Prisma Studio GUI
 npm run db:reset     # destroy volume and restart
 ```
 
-**Environment:** copy `.env.example` → `.env`. Required variable:
+**Environment:** copy `.env.example` → `.env`. Variables:
 
 ```
 DATABASE_URL="postgresql://logos:logos_pass@localhost:5432/logos_db?schema=public"
+OPENROUTER_API_KEY=""   # optional until Phase 2 (AI debate streaming)
 ```
+
+`DATABASE_URL` is required. `OPENROUTER_API_KEY` is validated only when AI routes are invoked — the app starts without it.
 
 ---
 
@@ -54,7 +57,7 @@ DATABASE_URL="postgresql://logos:logos_pass@localhost:5432/logos_db?schema=publi
 |-------|------|-------------|-------------|
 | `/` | Server Component | `Model`, `AppSetting` | Command Center — debate configuration form |
 | `/session/[id]` | Server Component | `DebateSession`, `DebateMessage` | Active or completed debate view |
-| `/history` | Server Component | `ArchiveSession` | Battle history grid with search |
+| `/history` | Server Component | `ArchiveSession` | Battle history grid with search + status filter |
 | `/models` | Server Component | `Model`, `AppSetting` | Model registry UI — toggle persisted via server action |
 
 All data pages use `export const dynamic = "force-dynamic"`.
@@ -113,6 +116,8 @@ DB/
 
 Planned location: `src/app/api/debate/route.ts` using Vercel AI SDK streaming. Client hooks (`useChat` / `useCompletion`) will manage the live debate stream on the session page.
 
+API key validation stub: `src/lib/ai/openrouter.ts` — `getOpenRouterApiKey()` throws `OpenRouterNotConfiguredError` when called without a key.
+
 ---
 
 ## Database Schema
@@ -155,6 +160,13 @@ erDiagram
         string jointDecisionText
         int alphaAgreement
         int betaAgreement
+        int iterations
+        string initiator
+        string alphaModelId
+        string betaModelId
+        int currentTurn
+        datetime startedAt
+        datetime completedAt
     }
 
     DebateMessage {
@@ -170,6 +182,7 @@ erDiagram
     ArchiveSession {
         string id PK
         string debateSessionId FK "unique, nullable"
+        string status
         string category
         string date
         string title
@@ -189,14 +202,14 @@ erDiagram
 |-------|---------|
 | `AppSetting` | Key-value JSON store (`registry` → maxActiveNodes; `defaultDebate` planned) |
 | `Model` | LLM registry — metadata for agent model selection on Command Center |
-| `DebateSession` | Core debate record — topic, agent configs, status, joint decision |
+| `DebateSession` | Core debate record — topic, agent configs, status, debate config (`iterations`, `initiator`, model IDs, turn tracking), joint decision |
 | `DebateMessage` | Individual exchange in a debate (cascade delete with session) |
-| `ArchiveSession` | History card summary — links to `DebateSession` via optional `debateSessionId` |
+| `ArchiveSession` | History card summary — lifecycle `status`, outcome `winner`, links to `DebateSession` |
 
 ### Session Lifecycle
 
 1. User submits Command Center form → `initializeBreach` server action.
-2. Transaction creates `ArchiveSession` (category `ACTIVE`, winner `pending`) and `DebateSession` (status `initialized`).
+2. Transaction creates `ArchiveSession` (`status: initialized`, `category: UNCLASSIFIED`, winner `pending`) and `DebateSession` (`status: initialized`).
 3. `ArchiveSession.debateSessionId` is set to link both records.
 4. Redirect to `/session/{sessionId}`.
 5. On completion (planned): update status, messages, joint decision, archive winner/resolution.
@@ -264,12 +277,15 @@ Use standard React hooks (`useState`, `useRef`, `useMemo`) for local UI state. N
 |---------|--------|
 | Command Center UI + form | ✅ Done |
 | Session initialization (DB) | ✅ Done |
+| Debate config persistence (iterations, initiator, model IDs) | ✅ Done |
 | Session detail page (read-only) | ✅ Done |
 | History / Archives (DB) | ✅ Done |
 | History search | ✅ Done |
+| History status filter | ✅ Done |
 | History sort tabs | ⚠️ UI only — no sorting logic |
 | Model registry page | ✅ Done (DB + persisted toggle) |
 | Models from DB on Command Center | ✅ Done |
+| OpenRouter API key validation stub | ✅ Done (`src/lib/ai/openrouter.ts`) |
 | Real-time AI debate streaming | ❌ Not implemented |
 | Log Consensus action | ❌ Not implemented |
 | Settings / Support nav | ❌ Placeholder links |

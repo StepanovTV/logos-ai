@@ -8,8 +8,18 @@
     "agentAlpha": "Alpha-7",
     "agentBeta": "Beta-Prime",
     "winner": "alpha",
+    "status": "archived",
     "resolution": "Alpha-7 successfully established that synthetic truth bounds are strictly determined by training data topology.",
-    "metrics": { "nodes": 112, "cpu": "24.2s" }
+    "metrics": { "nodes": 112, "cpu": "24.2s" },
+    "debateConfig": {
+      "iterations": 5,
+      "initiator": "alpha",
+      "alphaModelId": "gpt-4o",
+      "betaModelId": "claude-3.5-sonnet",
+      "currentTurn": 4,
+      "startedAt": "2023-10-14T08:00:00.000Z",
+      "completedAt": "2023-10-14T08:00:24.200Z"
+    }
   },
   {
     "id": "arch-002",
@@ -20,8 +30,18 @@
     "agentAlpha": "Alpha-4",
     "agentBeta": "Beta-Prime",
     "winner": "beta",
+    "status": "archived",
     "resolution": "Beta-Prime successfully argued that equitable distribution algorithms maximize long-term network survival over localized optimization.",
-    "metrics": { "nodes": 142, "cpu": "45.1s" }
+    "metrics": { "nodes": 142, "cpu": "45.1s" },
+    "debateConfig": {
+      "iterations": 7,
+      "initiator": "beta",
+      "alphaModelId": "gpt-4o",
+      "betaModelId": "claude-3.5-sonnet",
+      "currentTurn": 6,
+      "startedAt": "2023-10-12T14:30:00.000Z",
+      "completedAt": "2023-10-12T14:30:45.100Z"
+    }
   },
   {
     "id": "arch-003",
@@ -32,8 +52,18 @@
     "agentAlpha": "Alpha-7",
     "agentBeta": "Beta-Nexus",
     "winner": "draw",
+    "status": "timeout",
     "resolution": "Infinite loop detected. Both agents reached contradictory optimal outcomes based on divergent base-axiom weights.",
-    "metrics": { "error": "Timeout Error" }
+    "metrics": { "error": "Timeout Error" },
+    "debateConfig": {
+      "iterations": 10,
+      "initiator": "alpha",
+      "alphaModelId": "gemini-1.5-pro",
+      "betaModelId": "llama-3.1",
+      "currentTurn": 10,
+      "startedAt": "2023-10-10T09:15:00.000Z",
+      "completedAt": null
+    }
   },
   {
     "id": "arch-004",
@@ -44,7 +74,17 @@
     "agentAlpha": "Alpha-2",
     "agentBeta": "Beta-Prime",
     "winner": "alpha",
+    "status": "archived",
     "resolution": "Alpha-2 proved that standardizing semantic drift protocols increases inter-agent communication efficiency by 14%.",
-    "metrics": { "nodes": 64, "cpu": "18.7s" }
+    "metrics": { "nodes": 64, "cpu": "18.7s" },
+    "debateConfig": {
+      "iterations": 3,
+      "initiator": "alpha",
+      "alphaModelId": "gpt-4o",
+      "betaModelId": "claude-3.5-sonnet",
+      "currentTurn": 2,
+      "startedAt": "2023-10-08T11:00:00.000Z",
+      "completedAt": "2023-10-08T11:00:18.700Z"
+    }
   }
 ]

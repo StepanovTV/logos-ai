@@ -2,34 +2,60 @@
 
 import { ArchiveCard } from "@/components/history/ArchiveCard";
 import { TopNav } from "@/components/layout/TopNav";
-import type { ArchiveSession } from "@/types/history";
+import { STATUS_FILTER_OPTIONS } from "@/constants/archiveStatus";
+import type { ArchiveSession, ArchiveStatus } from "@/types/history";
 import { Filter, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type HistoryViewProps = {
   sessions: ArchiveSession[];
 };
 
 type SortTab = "Recent" | "Impact" | "Duration";
+type StatusFilter = "All" | ArchiveStatus;
 
 const sortTabs: SortTab[] = ["Recent", "Impact", "Duration"];
 
 export function HistoryView({ sessions }: HistoryViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSort, setActiveSort] = useState<SortTab>("Recent");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
+        setIsFilterOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const filteredSessions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return sessions;
-    }
 
-    return sessions.filter(
-      (session) =>
+    return sessions.filter((session) => {
+      const matchesSearch =
+        !query ||
         session.title.toLowerCase().includes(query) ||
-        session.category.toLowerCase().includes(query),
-    );
-  }, [searchQuery, sessions]);
+        session.category.toLowerCase().includes(query);
+
+      const matchesStatus =
+        statusFilter === "All" || session.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [searchQuery, sessions, statusFilter]);
+
+  const activeFilterLabel =
+    STATUS_FILTER_OPTIONS.find((option) => option.value === statusFilter)
+      ?.label ?? "All";
 
   return (
     <div className="p-8">
@@ -75,13 +101,47 @@ export function HistoryView({ sessions }: HistoryViewProps) {
                 </button>
               );
             })}
-            <button
-              type="button"
-              aria-label="Filter archives"
-              className="ml-0.5 flex h-7 w-7 items-center justify-center rounded-sm text-[#849495] transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <Filter className="h-3.5 w-3.5" />
-            </button>
+            <div className="relative ml-0.5" ref={filterRef}>
+              <button
+                type="button"
+                aria-label="Filter archives by status"
+                aria-expanded={isFilterOpen}
+                onClick={() => setIsFilterOpen((open) => !open)}
+                className={`flex h-7 items-center gap-1 rounded-sm px-2 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                  statusFilter !== "All"
+                    ? "text-[#00f0ff]"
+                    : "text-[#849495] hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                <Filter className="h-3.5 w-3.5" />
+                {statusFilter !== "All" ? activeFilterLabel : ""}
+              </button>
+
+              {isFilterOpen && (
+                <div className="absolute right-0 top-full z-20 mt-1 min-w-[10rem] rounded-sm border border-white/10 bg-[#1f1f22] p-1 shadow-lg backdrop-blur-md">
+                  {STATUS_FILTER_OPTIONS.map((option) => {
+                    const isActive = statusFilter === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => {
+                          setStatusFilter(option.value);
+                          setIsFilterOpen(false);
+                        }}
+                        className={`block w-full rounded-sm px-3 py-2 text-left font-mono text-[10px] uppercase tracking-wider transition-colors ${
+                          isActive
+                            ? "bg-white/10 text-white"
+                            : "text-[#849495] hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -94,7 +154,9 @@ export function HistoryView({ sessions }: HistoryViewProps) {
 
       {filteredSessions.length === 0 && (
         <p className="mt-8 text-center font-body text-sm text-[#849495]">
-          No archives match your search parameters.
+          {statusFilter !== "All" || searchQuery.trim()
+            ? "No archives match your search or status filter."
+            : "No archives available."}
         </p>
       )}
 

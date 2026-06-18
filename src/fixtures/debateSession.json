@@ -14,6 +14,15 @@
       "status": "idle"
     }
   },
+  "config": {
+    "iterations": 5,
+    "initiator": "alpha",
+    "alphaModelId": "gpt-4o",
+    "betaModelId": "claude-3.5-sonnet",
+    "currentTurn": 2,
+    "startedAt": "2024-06-16T10:00:00.000Z",
+    "completedAt": "2024-06-16T10:12:00.000Z"
+  },
   "history": [
     {
       "id": "msg-1",

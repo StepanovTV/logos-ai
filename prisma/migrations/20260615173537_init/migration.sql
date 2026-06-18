@@ -23,24 +23,6 @@ CREATE TABLE "Model" (
 );
 
 -- CreateTable
-CREATE TABLE "ArchiveSession" (
-    "id" TEXT NOT NULL,
-    "debateSessionId" TEXT,
-    "category" TEXT NOT NULL,
-    "date" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "agentAlpha" TEXT NOT NULL,
-    "agentBeta" TEXT NOT NULL,
-    "winner" TEXT NOT NULL,
-    "resolution" TEXT NOT NULL,
-    "nodes" INTEGER,
-    "cpu" TEXT,
-    "error" TEXT,
-
-    CONSTRAINT "ArchiveSession_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "DebateSession" (
     "sessionId" TEXT NOT NULL,
     "topic" TEXT NOT NULL,
@@ -54,8 +36,34 @@ CREATE TABLE "DebateSession" (
     "jointDecisionText" TEXT,
     "alphaAgreement" INTEGER,
     "betaAgreement" INTEGER,
+    "iterations" INTEGER NOT NULL DEFAULT 5,
+    "initiator" TEXT NOT NULL DEFAULT 'alpha',
+    "alphaModelId" TEXT NOT NULL,
+    "betaModelId" TEXT NOT NULL,
+    "currentTurn" INTEGER NOT NULL DEFAULT 0,
+    "startedAt" TIMESTAMP(3),
+    "completedAt" TIMESTAMP(3),
 
     CONSTRAINT "DebateSession_pkey" PRIMARY KEY ("sessionId")
+);
+
+-- CreateTable
+CREATE TABLE "ArchiveSession" (
+    "id" TEXT NOT NULL,
+    "debateSessionId" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'initialized',
+    "category" TEXT NOT NULL,
+    "date" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "agentAlpha" TEXT NOT NULL,
+    "agentBeta" TEXT NOT NULL,
+    "winner" TEXT NOT NULL,
+    "resolution" TEXT NOT NULL,
+    "nodes" INTEGER,
+    "cpu" TEXT,
+    "error" TEXT,
+
+    CONSTRAINT "ArchiveSession_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable

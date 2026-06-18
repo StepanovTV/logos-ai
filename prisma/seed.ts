@@ -13,12 +13,54 @@ type ArchiveMetrics =
 
 type HistoryEntry = (typeof historyData)[number];
 
+type DebateConfigFixture = {
+  iterations: number;
+  initiator: string;
+  alphaModelId: string;
+  betaModelId: string;
+  currentTurn: number;
+  startedAt: string | null;
+  completedAt: string | null;
+};
+
+function buildDebateConfigFields(config: DebateConfigFixture) {
+  return {
+    iterations: config.iterations,
+    initiator: config.initiator,
+    alphaModelId: config.alphaModelId,
+    betaModelId: config.betaModelId,
+    currentTurn: config.currentTurn,
+    startedAt: config.startedAt ? new Date(config.startedAt) : null,
+    completedAt: config.completedAt ? new Date(config.completedAt) : null,
+  };
+}
+
 function flattenMetrics(metrics: ArchiveMetrics) {
   if ("error" in metrics) {
     return { nodes: null, cpu: null, error: metrics.error };
   }
 
   return { nodes: metrics.nodes, cpu: metrics.cpu, error: null };
+}
+
+function deriveArchiveStatus(session: HistoryEntry): string {
+  if ("status" in session && typeof session.status === "string") {
+    return session.status;
+  }
+
+  if (session.winner === "pending") {
+    return "initialized";
+  }
+
+  if ("error" in session.metrics) {
+    return "timeout";
+  }
+
+  if (session.winner === "alpha" || session.winner === "beta" || session.winner === "draw") {
+    return "archived";
+  }
+
+  return "initialized";
 }
 
 function debateStatus(session: HistoryEntry): string {
@@ -69,6 +111,7 @@ function buildArchiveMessages(session: HistoryEntry) {
 async function seedArchiveDebateSession(session: HistoryEntry) {
   const { alphaAgreement, betaAgreement } = agreementScores(session.winner);
   const hasJointDecision = !("error" in session.metrics);
+  const configFields = buildDebateConfigFields(session.debateConfig);
 
   await prisma.debateSession.upsert({
     where: { sessionId: session.debateSessionId },
@@ -84,6 +127,7 @@ async function seedArchiveDebateSession(session: HistoryEntry) {
       jointDecisionText: hasJointDecision ? session.resolution : null,
       alphaAgreement: hasJointDecision ? alphaAgreement : null,
       betaAgreement: hasJointDecision ? betaAgreement : null,
+      ...configFields,
     },
     create: {
       sessionId: session.debateSessionId,
@@ -98,6 +142,7 @@ async function seedArchiveDebateSession(session: HistoryEntry) {
       jointDecisionText: hasJointDecision ? session.resolution : null,
       alphaAgreement: hasJointDecision ? alphaAgreement : null,
       betaAgreement: hasJointDecision ? betaAgreement : null,
+      ...configFields,
     },
   });
 
@@ -155,6 +200,7 @@ async function main() {
     const metrics = flattenMetrics(session.metrics as ArchiveMetrics);
 
     const archiveFields = {
+      status: deriveArchiveStatus(session),
       category: session.category,
       date: session.date,
       title: session.title,
@@ -183,8 +229,9 @@ async function main() {
     );
   }
 
-  const { agents, history, jointDecision, sessionId, status, topic } =
+  const { agents, config, history, jointDecision, sessionId, status, topic } =
     debateSessionData;
+  const configFields = buildDebateConfigFields(config);
 
   await prisma.debateSession.upsert({
     where: { sessionId },
@@ -200,6 +247,7 @@ async function main() {
       jointDecisionText: jointDecision.text,
       alphaAgreement: jointDecision.alphaAgreement,
       betaAgreement: jointDecision.betaAgreement,
+      ...configFields,
     },
     create: {
       sessionId,
@@ -214,6 +262,7 @@ async function main() {
       jointDecisionText: jointDecision.text,
       alphaAgreement: jointDecision.alphaAgreement,
       betaAgreement: jointDecision.betaAgreement,
+      ...configFields,
     },
   });
 

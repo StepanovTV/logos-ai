@@ -48,7 +48,8 @@ export async function initializeBreach(config: DebateConfig): Promise<void> {
       await tx.archiveSession.create({
         data: {
           id: archiveId,
-          category: "ACTIVE",
+          status: "initialized",
+          category: "UNCLASSIFIED",
           date: formatArchiveDate(new Date(timestamp)),
           title: thesis,
           agentAlpha: alphaName,
@@ -72,6 +73,13 @@ export async function initializeBreach(config: DebateConfig): Promise<void> {
           betaName,
           betaFramework,
           betaStatus: config.initiator === "beta" ? "active" : "idle",
+          iterations: config.iterations,
+          initiator: config.initiator,
+          alphaModelId: config.alpha.model,
+          betaModelId: config.beta.model,
+          currentTurn: 0,
+          startedAt: null,
+          completedAt: null,
         },
       });
 

@@ -35,11 +35,22 @@ export type SessionAgent = {
   status: string;
 };
 
+export type DebateSessionConfig = {
+  iterations: number;
+  initiator: AgentId;
+  alphaModelId: string;
+  betaModelId: string;
+  currentTurn: number;
+  startedAt: Date | null;
+  completedAt: Date | null;
+};
+
 export type DebateSession = {
   sessionId: string;
   topic: string;
   status: string;
   agents: Record<AgentId, SessionAgent>;
+  config: DebateSessionConfig;
   history: DebateMessage[];
   jointDecision: JointDecision;
 };
