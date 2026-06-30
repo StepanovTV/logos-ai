@@ -152,6 +152,11 @@ export function mapRegistryModel(record: ModelRecord): RegistryModel {
     contextWindow: record.contextWindow,
     releaseDate: record.releaseDate,
     reasoningStyle: record.reasoningStyle,
+    usagePricePerM:
+      typeof record.usagePricePerM === "number" &&
+      Number.isFinite(record.usagePricePerM)
+        ? record.usagePricePerM
+        : 1,
   };
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ModelAccent, ModelIcon, RegistryModel } from "@/types/models";
+import { formatUsagePricePerM } from "@/lib/ai/calculate-usage-price";
 import { motion } from "framer-motion";
 import { Brain, Check, Cpu, Infinity, Network } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -109,6 +110,14 @@ export function ModelCard({ model, onToggle, disabled = false }: ModelCardProps)
           </p>
           <p className="mt-1 font-mono text-sm text-white">
             {model.contextWindow}
+          </p>
+        </div>
+        <div className="col-span-2">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-[#849495]">
+            Usage Price
+          </p>
+          <p className="mt-1 font-mono text-sm text-white">
+            {formatUsagePricePerM(model.usagePricePerM)}
           </p>
         </div>
       </div>

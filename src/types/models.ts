@@ -13,6 +13,7 @@ export type RegistryModel = {
   contextWindow: string;
   releaseDate: string;
   reasoningStyle: string;
+  usagePricePerM: number;
 };
 
 export type ModelsRegistry = {

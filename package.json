@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,7 +15,10 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:setup": "npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed"
+    "db:setup": "npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed",
+    "openrouter:verify": "tsx --env-file=.env scripts/verify-openrouter.ts",
+    "openrouter:models": "tsx --env-file=.env scripts/list-openrouter-models.ts",
+    "registry:sync": "tsx --env-file=.env scripts/sync-openrouter-models.ts"
   },
   "dependencies": {
     "@openrouter/ai-sdk-provider": "^2.9.1",

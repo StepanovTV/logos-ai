@@ -165,34 +165,23 @@ async function main() {
     },
   });
 
-  for (const model of modelsData.models) {
-    await prisma.model.upsert({
-      where: { id: model.id },
-      update: {
-        name: model.name,
-        provider: model.provider,
-        icon: model.icon,
-        active: model.active,
-        accent: model.accent ?? null,
-        paramCount: model.paramCount,
-        contextWindow: model.contextWindow,
-        releaseDate: model.releaseDate,
-        reasoningStyle: model.reasoningStyle,
-      },
-      create: {
-        id: model.id,
-        name: model.name,
-        provider: model.provider,
-        icon: model.icon,
-        active: model.active,
-        accent: model.accent ?? null,
-        paramCount: model.paramCount,
-        contextWindow: model.contextWindow,
-        releaseDate: model.releaseDate,
-        reasoningStyle: model.reasoningStyle,
-      },
-    });
-  }
+  await prisma.model.deleteMany();
+
+  await prisma.model.createMany({
+    data: modelsData.models.map((model) => ({
+      id: model.id,
+      name: model.name,
+      provider: model.provider,
+      icon: model.icon,
+      active: model.active,
+      accent: model.accent ?? null,
+      paramCount: model.paramCount,
+      contextWindow: model.contextWindow,
+      releaseDate: model.releaseDate,
+      reasoningStyle: model.reasoningStyle,
+      usagePricePerM: model.usagePricePerM,
+    })),
+  });
 
   for (const session of historyData) {
     await seedArchiveDebateSession(session);

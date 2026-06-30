@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Model" ADD COLUMN     "usagePricePerM" DOUBLE PRECISION NOT NULL DEFAULT 1;

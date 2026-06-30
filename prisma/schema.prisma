@@ -23,6 +23,7 @@ model Model {
   contextWindow  String
   releaseDate    String
   reasoningStyle String
+  usagePricePerM Float   @default(1)
 }
 
 model ArchiveSession {
